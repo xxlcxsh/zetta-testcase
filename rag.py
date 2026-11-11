@@ -223,7 +223,7 @@ class MiniRAG:
             try:
                 from transformers import pipeline
             except ImportError as exc:
-                raise RuntimeError("Для режима llm установите зависимости: pip install -r requirements-llm.txt") from exc
+                raise RuntimeError("Для режима llm установите зависимости: pip install -r requirements.txt") from exc
             self._pipeline = pipeline("text-generation", model=self.model_name, device_map="auto", dtype="auto")
         return self._pipeline
 
