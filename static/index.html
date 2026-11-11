@@ -1,0 +1,21 @@
+<!doctype html>
+<html lang="ru">
+<head>
+  <meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+  <title>Аккорд · mini-RAG</title>
+  <style>
+    :root{font-family:Inter,system-ui,sans-serif;color:#17202a;background:#f4f1ea}*{box-sizing:border-box}
+    main{max-width:850px;margin:5vh auto;padding:32px;background:#fff;border-radius:18px;box-shadow:0 12px 40px #2632381c}
+    h1{margin:0 0 8px;color:#663c20}p{color:#59636e}textarea{width:100%;min-height:105px;padding:14px;border:1px solid #bbb;border-radius:10px;font:inherit;resize:vertical}
+    .controls{display:flex;gap:12px;align-items:center;margin-top:12px}select,button{padding:10px 14px;border-radius:9px;border:1px solid #aaa;background:white}
+    button{background:#99582a;color:white;border:0;cursor:pointer;font-weight:650}.result{margin-top:25px}.source{background:#f7f4ef;border-left:4px solid #bb7b48;padding:10px 14px;margin:10px 0;border-radius:4px}
+    .meta{font-size:.82rem;color:#7c6759}.error{color:#a21b1b}pre{white-space:pre-wrap;font-family:inherit;line-height:1.5}
+  </style>
+</head>
+<body><main><h1>Творческий центр «Аккорд»</h1><p>Задайте вопрос по правилам центра. Ответ будет сопровождаться дословными цитатами.</p>
+<textarea id="q" placeholder="Например: Как продлить выдачу микрофона?"></textarea><div class="controls"><select id="mode"><option value="chunk">Вернуть чанк</option><option value="llm">Qwen3-0.6B</option></select><button id="ask">Спросить</button></div><section id="out" class="result"></section></main>
+<script>
+const out=document.querySelector('#out'),btn=document.querySelector('#ask');
+btn.onclick=async()=>{const question=document.querySelector('#q').value.trim();if(!question)return;btn.disabled=true;out.innerHTML='<p>Ищу ответ…</p>';try{const r=await fetch('/api/ask',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({question,mode:document.querySelector('#mode').value})});const d=await r.json();if(!r.ok)throw Error(d.detail||'Ошибка');out.innerHTML=`<h2>Ответ</h2><pre>${esc(d.answer)}</pre>`+(d.sources.length?'<h3>Источники</h3>'+d.sources.map(s=>`<div class="source"><div class="meta">${esc(s.doc_id)} · ${esc(s.title)}</div>${esc(s.text)}</div>`).join(''):'');}catch(e){out.innerHTML=`<p class="error">${esc(e.message)}</p>`}finally{btn.disabled=false}};
+function esc(s){const d=document.createElement('div');d.textContent=s;return d.innerHTML}
+</script></body></html>
