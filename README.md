@@ -17,9 +17,9 @@ Python 3.10–3.12. (выше не проверял)
 python -m venv .venv
 ```
 
-Windows:
+Windows (внутри venv, аналогично на linux/MacOS):
 
-```powershell (внутри venv, аналогично на linux)
+```powershell
 pip install -r requirements.txt
 uvicorn app:app --reload
 ```
